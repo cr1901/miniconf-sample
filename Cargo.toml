@@ -12,5 +12,5 @@ embedded-storage-async = "0.4.1"
 heapless = { version = "0.8.0", features = ["serde"] }
 miniconf = { git = "https://github.com/quartiq/miniconf", branch = "lookup", features = ["postcard", "json-core"] }
 postcard = "1.0.8"
-sequential-storage = { git = "https://github.com/tweedegolf/sequential-storage.git", version = "2.0.0" }
+sequential-storage = { git = "https://github.com/tweedegolf/sequential-storage.git", version = "2.0.0", features = ["_test"]}
 serde = { version = "1.0.199", default-features = false }
