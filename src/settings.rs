@@ -29,7 +29,7 @@ pub const MSG_0: Packed = const_packed(0b1_1_0000_0);
 #[allow(unused)]
 pub const MSG_1: Packed = const_packed(0b1_1_0001_0);
 
-// Take straight from: 
+// Taken straight from: https://github.com/quartiq/stabilizer/blob/fix/861/menu-clear/src/settings.rs
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SettingsKey(pub u8);
 

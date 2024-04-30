@@ -1,7 +1,7 @@
 use embassy_futures::block_on;
 use miniconf::{Traversal, TreeKey, TreeSerialize};
 use postcard::ser_flavors::Flavor;
-use sequential_storage::{self, cache::NoCache};
+use sequential_storage::{self, cache::NoCache, mock_flash::{MockFlashBase, WriteCountCheck}};
 
 mod eeprom;
 mod settings;
@@ -15,7 +15,8 @@ fn main() {
 
     let mut buf = [0; 128];
     // let mut byte_ser = Serializer::from_flavor ser::Slice::new(&mut buf)
-    let mut emu = EepromEmu::new();
+    // let mut emu = EepromEmu::new();
+    let mut emu = MockFlashBase::<64, 1, 16>::new(WriteCountCheck::Disabled, None, false);
 
     let mut s = Settings::default();
 
@@ -24,7 +25,8 @@ fn main() {
     // assert_eq!(MSG_1, Settings::packed(["msgs", "1", "0"]).unwrap().0);
 
     s.lcd_size = [20, 4];
-    s.msgs[0] = Some(Msg(TryFrom::try_from("Th").unwrap()));
+    s.msgs[0] = Some(Msg(TryFrom::try_from("This is a test message").unwrap()));
+    s.msgs[1] = Some(Msg(TryFrom::try_from("Here is another test message").unwrap()));
 
     let mut buf2 = [0; 128];
     for p in Settings::iter_packed() {
@@ -36,11 +38,7 @@ fn main() {
             continue;
         }
 
-        s.serialize_by_key(p.unwrap(), &mut ser).unwrap();
         let len = ser.output.finalize().unwrap().len();
-        println!("{}", len);
-
-        // let key = SettingsKey(p.unwrap().get() as u8);
         println!("{:#b}, {:?}", p.unwrap().into_lsb().get(), &buf[0..len]);
 
         block_on(sequential_storage::map::store_item(
@@ -52,7 +50,7 @@ fn main() {
             &SettingsItem(&buf[0..len]),
         )).unwrap();
 
-        println!("{:?}", emu);
+        // println!("{:?}", emu);
     }
 
     // println!("{:?}", buf);
